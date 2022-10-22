@@ -100,7 +100,7 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
             <DrawerBody>
               <Stack>
                   {cart.map(product => (
-                    <Box backgroundColor="gray.100" padding={3} borderRadius={5}>
+                    <Box backgroundColor="gray.100" padding={3} borderRadius={5} key={product.id}>
                       <HStack>
                         <Image width={20} src={product.image}/>
                         <VStack>
