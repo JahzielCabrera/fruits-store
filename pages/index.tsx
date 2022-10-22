@@ -24,7 +24,7 @@ import {
   DrawerCloseButton,
   Link
 } from '@chakra-ui/react';
-import { parse } from "node:path/win32";
+import { motion, AnimatePresence, AnimateSharedLayout } from 'framer-motion'
 
 interface Props {
   products: Product[]
@@ -54,80 +54,91 @@ const IndexRoute: React.FC<Props> = ({ products }) => {
   }
 
   return (
-    <Stack spacing={6}>
-        <Grid gridGap={6} templateColumns='repeat(auto-fill, minmax(240px, 1fr))'>
-          {products.map(product => 
-            <Stack spacing={3} borderRadius="md" padding={4} key={product.id} backgroundColor="gray.100">
-              <Stack spacing={1}>
-                <Text fontSize={20} fontWeight="bold" textAlign="center">{product.title}</Text>
-                <Image width={80} src={product.image}/>
-                <Text fontSize="xl" fontWeight="bold" color="green.500">{parseCurrency(product.price)}</Text>
-              </Stack>
+    <AnimateSharedLayout>
+      <Stack spacing={6}>
+          <Grid gridGap={6} templateColumns='repeat(auto-fill, minmax(240px, 1fr))'>
+            {products.map(product => 
+              <Stack spacing={3} borderRadius="md" padding={4} key={product.id} backgroundColor="gray.100">
+                <Stack spacing={1}>
+                  <Text fontSize={20} fontWeight="bold" textAlign="center">{product.title}</Text>
+                  <AnimatePresence>
+                    <Image 
+                      as={motion.img}
+                      cursor="pointer"
+                      layoutId={product.id}
+                      alt={product.title} 
+                      width={80} 
+                      src={product.image}
+                    />
+                  </AnimatePresence>
+                  <Text fontSize="xl" fontWeight="bold" color="green.500">{parseCurrency(product.price)}</Text>
+                </Stack>
+                <Button 
+                  colorScheme='primary' 
+                  variant="outline"
+                  onClick={() => handleAddToCart(product)}
+                  size="sm"
+                >Add to cart</Button>
+              </Stack>)}
+          </Grid>
+          {Boolean(cart.length) && 
+            <Flex padding={4} bottom={0} alignItems="center" position="sticky" backgroundColor="white" justifyContent="center">
               <Button 
-                colorScheme='primary' 
-                variant="outline"
-                onClick={() => handleAddToCart(product)}
-                size="sm"
-              >Add to cart</Button>
-            </Stack>)}
-        </Grid>
-        {Boolean(cart.length) && 
-          <Flex padding={4} bottom={0} alignItems="center" position="sticky" backgroundColor="white" justifyContent="center">
-            <Button 
-              width="fit-content"
-              colorScheme="whatsapp"
-              // as={Link}
-              // href={`https://wa.me/2281495452?text=${encodeURIComponent(text)}`}
-              // isExternal
-              ref={btnRef}
-              onClick={onOpen}
-            >
-              View Cart ({cart.length})
-            </Button>
-          </Flex>
-        }
-
-        <Drawer
-          isOpen={isOpen}
-          placement='right'
-          onClose={onClose}
-          finalFocusRef={btnRef}
-        >
-          <DrawerOverlay />
-          <DrawerContent>
-            <DrawerCloseButton />
-            <DrawerHeader>Your Cart</DrawerHeader>
-            <DrawerBody>
-              <Stack>
-                  {cart.map(product => (
-                    <Box backgroundColor="gray.100" padding={3} borderRadius={5} key={product.id}>
-                      <HStack>
-                        <Image width={20} src={product.image}/>
-                        <VStack>
-                          <Text fontWeight="bold">{product.title}</Text>
-                          <Text fontWeight="medium" color="green.500">{parseCurrency(product.price)}</Text>
-                        </VStack>
-                      </HStack>
-                    </Box>
-                  ))}
-              </Stack>
-            </DrawerBody>
-            <DrawerFooter>
-              <Button variant='outline' mr={3} onClick={onClose}>
-                Cancel
-              </Button>
-              <Button 
-                as={Link}
-                colorScheme='whatsapp'
-                href={`https://wa.me/2281495452?text=${encodeURIComponent(text)}`}
-                isExternal
+                width="fit-content"
+                colorScheme="whatsapp"
+                // as={Link}
+                // href={`https://wa.me/2281495452?text=${encodeURIComponent(text)}`}
+                // isExternal
+                ref={btnRef}
+                onClick={onOpen}
               >
-                Go to checkout
+                View Cart ({cart.length})
               </Button>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
-    </Stack>
+            </Flex>
+          }
+
+          <Drawer
+            isOpen={isOpen}
+            placement='right'
+            onClose={onClose}
+            finalFocusRef={btnRef}
+          >
+            <DrawerOverlay />
+            <DrawerContent>
+              <DrawerCloseButton />
+              <DrawerHeader>Your Cart</DrawerHeader>
+              <DrawerBody>
+                <Stack>
+                    {cart.map(product => (
+                      <Box backgroundColor="gray.100" padding={3} borderRadius={5} key={product.id}>
+                        <HStack>
+                          <Image width={20} src={product.image}/>
+                          <VStack>
+                            <Text fontWeight="bold">{product.title}</Text>
+                            <Text fontWeight="medium" color="green.500">{parseCurrency(product.price)}</Text>
+                          </VStack>
+                        </HStack>
+                      </Box>
+                    ))}
+                </Stack>
+              </DrawerBody>
+              <DrawerFooter>
+                <Button variant='outline' mr={3} onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button 
+                  as={Link}
+                  colorScheme='whatsapp'
+                  href={`https://wa.me/2281495452?text=${encodeURIComponent(text)}`}
+                  isExternal
+                >
+                  Go to checkout
+                </Button>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+      </Stack>
+    </AnimateSharedLayout>
   )
 }
 
